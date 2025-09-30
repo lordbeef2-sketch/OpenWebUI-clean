@@ -1,0 +1,5 @@
+click==8.3.0
+colorama==0.4.6
+h11==0.16.0
+unstructured==0.16.17
+uvicorn==0.37.0
