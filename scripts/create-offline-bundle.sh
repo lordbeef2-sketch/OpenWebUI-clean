@@ -53,6 +53,9 @@ tar -C "$TMPDIR" -czf "$NPM_DIR/node_modules.tar.gz" node_modules
 cp "$ROOT_DIR/package.json" "$NPM_DIR/" 2>/dev/null || true
 cp "$ROOT_DIR/package-lock.json" "$NPM_DIR/" 2>/dev/null || true
 
+echo "Downloading Hugging Face models..."
+"$PY_CMD" "$ROOT_DIR/scripts/download-hf-models.py"
+
 echo "Creating final zip archive: OpenWebUI-offline.zip"
 pushd "$OUT_DIR/.." >/dev/null
 zip -r "OpenWebUI-offline.zip" "$(basename "$OUT_DIR")" >/dev/null

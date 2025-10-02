@@ -36,6 +36,14 @@ if (Test-Path $nodeArchive) {
 Write-Host "Copying repository files into $InstallRoot"
 Copy-Item -Path (Join-Path (Get-Location) '*') -Destination $InstallRoot -Recurse -Force -Exclude 'offline_bundle'
 
+Write-Host "Copying offline bundle models"
+$modelsSrc = Join-Path $tmp 'offline_bundle\models'
+$modelsDst = Join-Path $InstallRoot 'offline_bundle\models'
+if (Test-Path $modelsSrc) {
+  New-Item -ItemType Directory -Path $modelsDst -Force | Out-Null
+  Copy-Item -Path "$modelsSrc\*" -Destination $modelsDst -Recurse -Force
+}
+
 Remove-Item -Recurse -Force $tmp
 
 Write-Host "Install complete. Activate the venv with: $InstallRoot\\.venv\\Scripts\\Activate.ps1"

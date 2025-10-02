@@ -2,10 +2,9 @@
 Creates an offline bundle for OpenWebUI on Windows (PowerShell).
 Usage: Run this on an internet-connected Windows machine with Python and npm available:
 
-.
-\scripts\Create-OfflineBundle.ps1
+.\scripts\Create-OfflineBundle.ps1
 
-Outputs: OpenWebUI-offline.zip at the repo root containing python wheels and node_modules archive.
+Outputs: OpenWebUI-offline.zip at the repo root containing python wheels, node_modules archive, and Hugging Face models.
 #>
 param(
   [string]$RepoRoot = (Resolve-Path "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)/..")
@@ -47,6 +46,9 @@ Pop-Location
 Write-Host "Archiving node_modules to $NpmDir\node_modules.zip"
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [System.IO.Compression.ZipFile]::CreateFromDirectory((Join-Path $tmp 'node_modules'), (Join-Path $NpmDir 'node_modules.zip'))
+
+Write-Host "Downloading Hugging Face models..."
+& $py (Join-Path $RepoRoot 'scripts\download-hf-models.py')
 
 Write-Host "Creating final OpenWebUI-offline.zip"
 $zipPath = Join-Path $RepoRoot 'OpenWebUI-offline.zip'
