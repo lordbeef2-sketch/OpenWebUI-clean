@@ -48,27 +48,22 @@ if ($LASTEXITCODE -ne 0) {
     Write-Warning "pip upgrade returned exit code $LASTEXITCODE. Continuing anyway."
 }
 
-# Prepare list of requirements files (only those that exist)
-$reqFiles = @(
-    Join-Path $RepoRoot 'requirements.txt',
-    Join-Path $RepoRoot 'requirements1.txt',
-    Join-Path $RepoRoot 'backend\requirements.txt'
-) | Where-Object { Test-Path $_ }
-
 $wheelDir = Join-Path $PSScriptRoot 'python_wheels'
 $npmDir = Join-Path $PSScriptRoot 'npm'
 
-foreach ($req in $reqFiles) {
-    if (Test-Path $wheelDir -PathType Container -ErrorAction SilentlyContinue) {
-        Write-Host "Installing Python packages from wheels in $wheelDir using $req"
-        & $venvPython -m pip install --no-index --find-links $wheelDir -r $req
+if (Test-Path $wheelDir -PathType Container -ErrorAction SilentlyContinue) {
+    $whlFiles = Get-ChildItem $wheelDir -Filter *.whl -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+    if ($whlFiles) {
+        Write-Host "Installing Python packages from wheels in $wheelDir"
+        & $venvPython -m pip install --no-index --find-links $wheelDir $whlFiles
     } else {
-        Write-Host "Wheel directory $wheelDir not found. Installing $req from PyPI (network required)."
-        & $venvPython -m pip install -r $req
+        Write-Host "No .whl files found in $wheelDir"
     }
     if ($LASTEXITCODE -ne 0) {
-        Write-Warning "pip install returned exit code $LASTEXITCODE for requirements file $req."
+        Write-Warning "pip install returned exit code $LASTEXITCODE for Python wheels."
     }
+} else {
+    Write-Host "Wheel directory $wheelDir not found. Cannot install Python packages offline."
 }
 
 # Run npm install in repo root

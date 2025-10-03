@@ -6,10 +6,10 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 SET "SCRIPT_DIR=%~dp0"
 cd /d "%SCRIPT_DIR%" || exit /b
 
-:: If a virtual environment exists in backend/.venv, activate it so python/uvicorn come from the venv
-IF EXIST "%SCRIPT_DIR%\.venv\Scripts\activate.bat" (
-    echo Activating virtual environment at .venv
-    call "%SCRIPT_DIR%\.venv\Scripts\activate.bat"
+:: If a virtual environment exists in the project root .venv, activate it so python/uvicorn come from the venv
+IF EXIST "%SCRIPT_DIR%..\.venv\Scripts\activate.bat" (
+    echo Activating virtual environment at ..\..\.venv
+    call "%SCRIPT_DIR%..\.venv\Scripts\activate.bat"
 )
 
 :: Add conditional Playwright browser installation
