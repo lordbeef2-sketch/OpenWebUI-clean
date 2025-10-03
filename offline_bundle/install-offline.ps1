@@ -56,6 +56,7 @@ $reqFiles = @(
 ) | Where-Object { Test-Path $_ }
 
 $wheelDir = Join-Path $PSScriptRoot 'python_wheels'
+$npmDir = Join-Path $PSScriptRoot 'npm'
 
 foreach ($req in $reqFiles) {
     if (Test-Path $wheelDir -PathType Container -ErrorAction SilentlyContinue) {
@@ -70,11 +71,22 @@ foreach ($req in $reqFiles) {
     }
 }
 
-# Run npm install --force in repo root
-Write-Host "Running 'npm install --force' in $RepoRoot"
+# Run npm install in repo root
 Push-Location $RepoRoot
 try {
-    & npm install --force
+    if (Test-Path $npmDir -PathType Container -ErrorAction SilentlyContinue) {
+        $tgzFiles = Get-ChildItem $npmDir -Filter *.tgz -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+        if ($tgzFiles) {
+            Write-Host "Installing NPM packages from local tarballs in $npmDir"
+            & npm install $tgzFiles --force
+        } else {
+            Write-Host "No .tgz files found in $npmDir. Installing from npm registry (network required)."
+            & npm install --force
+        }
+    } else {
+        Write-Host "NPM directory $npmDir not found. Installing from npm registry (network required)."
+        & npm install --force
+    }
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "npm install returned exit code $LASTEXITCODE"
     }
