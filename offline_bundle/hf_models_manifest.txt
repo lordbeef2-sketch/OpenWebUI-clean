@@ -1,0 +1,21 @@
+# HuggingFace model snapshot manifest for OpenWebUI
+# Pre-download these model snapshots and place them under offline_bundle/hf_models/
+# Point the application to the local cache by setting the env var SENTENCE_TRANSFORMERS_HOME
+# (or HF_HOME / HUGGINGFACE_HUB_CACHE) to the path containing these snapshots when running offline.
+#
+# Example Python command (run on a networked machine):
+#   python - <<'PY'
+#   from huggingface_hub import snapshot_download
+#   snapshot_download(repo_id="onnx-community/Kokoro-82M-v1.0-ONNX", cache_dir="offline_bundle/hf_models")
+#   snapshot_download(repo_id="TaylorAI/bge-micro-v2", cache_dir="offline_bundle/hf_models")
+#   snapshot_download(repo_id="sentence-transformers/all-MiniLM-L6-v2", cache_dir="offline_bundle/hf_models")
+#   PY
+#
+# Models referenced in the frontend and backend (start here):
+onnx-community/Kokoro-82M-v1.0-ONNX
+TaylorAI/bge-micro-v2
+sentence-transformers/all-MiniLM-L6-v2
+
+# Notes:
+# - The backend may be configured to use other sentence-transformer models; check your runtime `config` and add those repo IDs.
+# - For complete airgapped operation, pre-seed any model that users might select via the UI.
